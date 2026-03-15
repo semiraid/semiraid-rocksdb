@@ -23,7 +23,11 @@ ARFLAGS = ${EXTRA_ARFLAGS} rs
 STRIPFLAGS = -S -x
 
 LIBS = -lerpc -lpthread -lnuma -ldl
-LDFLAGS += -Wl,-whole-archive /users/kyleshu/git/dRaid/src/rpcDRaid/bdev_raid_rpc.a -L /users/kyleshu/git/eRPC/build -Wl,--no-whole-archive -lerpc
+# BDEV_RAID_RPC_A: path to libbdev_raid_rpc.a, passed in by compile.sh via BDEV_RAID_RPC_A=...
+# ERPC_BUILD_DIR:  path to eRPC build directory (default: ~/git/eRPC/build, same as spdk.rocksdb.mk)
+BDEV_RAID_RPC_A ?= $(HOME)/SemiRAID/src/host/build/libbdev_raid_rpc.a
+ERPC_BUILD_DIR  ?= $(HOME)/git/eRPC/build
+LDFLAGS += -Wl,-whole-archive $(BDEV_RAID_RPC_A) -L $(ERPC_BUILD_DIR) -Wl,--no-whole-archive -lerpc
 
 # Transform parallel LOG output into something more readable.
 perl_command = perl -n \
@@ -1364,7 +1368,7 @@ librocksdb_env_basic_test.a: $(OBJ_DIR)/env/env_basic_test.o $(LIB_OBJECTS) $(TE
 	$(AM_V_AR)rm -f $@
 	$(AM_V_at)$(AR) $(ARFLAGS) $@ $^
 
-db_bench: $(OBJ_DIR)/tools/db_bench.o $(BENCH_OBJECTS) $(TESTUTIL) $(LIBRARY) /users/kyleshu/git/dRaid/src/rpcDRaid/bdev_raid_rpc.a
+db_bench: $(OBJ_DIR)/tools/db_bench.o $(BENCH_OBJECTS) $(TESTUTIL) $(LIBRARY) $(BDEV_RAID_RPC_A)
 	$(AM_LINK)
 
 trace_analyzer: $(OBJ_DIR)/tools/trace_analyzer.o $(ANALYZE_OBJECTS) $(TOOLS_LIBRARY) $(LIBRARY)
