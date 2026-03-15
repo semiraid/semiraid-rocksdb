@@ -22,12 +22,11 @@ MACHINE ?= $(shell uname -m)
 ARFLAGS = ${EXTRA_ARFLAGS} rs
 STRIPFLAGS = -S -x
 
-LIBS = -lerpc -lpthread -lnuma -ldl
+LIBS = -lpthread -lnuma -ldl
 # BDEV_RAID_RPC_A: path to libbdev_raid_rpc.a, passed in by compile.sh via BDEV_RAID_RPC_A=...
-# ERPC_BUILD_DIR:  path to eRPC build directory (default: ~/git/eRPC/build, same as spdk.rocksdb.mk)
+# eRPC was a historical dependency that is no longer used; removed from LIBS and LDFLAGS.
 BDEV_RAID_RPC_A ?= $(HOME)/SemiRAID/src/host/build/libbdev_raid_rpc.a
-ERPC_BUILD_DIR  ?= $(HOME)/git/eRPC/build
-LDFLAGS += -Wl,-whole-archive $(BDEV_RAID_RPC_A) -L $(ERPC_BUILD_DIR) -Wl,--no-whole-archive -lerpc
+LDFLAGS += -Wl,-whole-archive $(BDEV_RAID_RPC_A) -Wl,--no-whole-archive
 
 # Transform parallel LOG output into something more readable.
 perl_command = perl -n \
